@@ -1,0 +1,38 @@
+from django.urls import path
+from .views import inicio, register, productos, quienessomos, galeria, login_user, cerrarsesion, editarperfil, actualizarperfil, administrador, agregar, ingresarproducto, listaproducto, listausuarios, borrarperfil, borrarproducto, editarproducto, actualizaproducto, detalleproducto, exportar_productos_excel, buscar_productos, carrito, agregar_al_carrito, eliminar_del_carrito, aumentar_cantidad, disminuir_cantidad, comunas_por_region, crear_venta, listaventas, detalles_venta, cambiar_estado_venta, add_review
+
+urlpatterns = [
+    path('', inicio, name="inicio"),
+    path('register/', register, name="register"),
+    path('productos/', productos, name="productos"),
+    path('quienessomos/', quienessomos, name="quienessomos"),
+    path('galeria/', galeria, name="galeria"),
+    path('login_user/', login_user, name="login_user"),
+    path('cerrarsesion/', cerrarsesion, name="cerrarsesion"),
+    path('editarperfil/', editarperfil, name="editarperfil"),
+    path('actualizarperfil/', actualizarperfil, name="actualizarperfil"),
+    path('administrador/', administrador, name="administrador"),
+    path('agregar/', agregar, name="agregar"),
+    path('ingresarproducto/', ingresarproducto, name="ingresarproducto"),
+    path('listaproducto/', listaproducto, name="listaproducto"),
+    path('listausuarios/', listausuarios, name="listausuarios"),
+    path('listaventas/', listaventas, name='listaventas'),
+    path('borrarperfil/<str:correo>/', borrarperfil, name="borrarperfil"),
+    path('borrarproducto/<id_producto>/', borrarproducto, name="borrarproducto"),
+    path('editarproducto/<id_producto>/', editarproducto, name="editarproducto"),
+    path('actualizaproducto/', actualizaproducto, name="actualizaproducto"),
+    path('detalleproducto/<int:pk>', detalleproducto, name="detalleproducto"),
+    path('exportar_productos_excel/', exportar_productos_excel, name='exportar_productos_excel'),
+    path('buscar_productos/', buscar_productos, name='buscar_productos'),
+    path('agregar_al_carrito/<int:producto_cod>/', agregar_al_carrito, name='agregar_al_carrito'),
+    path('eliminar_del_carrito/<int:carrito_id>/', eliminar_del_carrito, name='eliminar_del_carrito'),
+    path('carrito/', carrito, name='carrito'),
+    path('aumentar_cantidad/<str:producto_cod>/', aumentar_cantidad, name='aumentar_cantidad'),
+    path('disminuir_cantidad/<str:producto_cod>/', disminuir_cantidad, name='disminuir_cantidad'),
+    path('api/comunas/<int:region_id>/', comunas_por_region, name='comunas_por_region'),
+    path('crear_venta/', crear_venta, name='crear_venta'),
+    path('detalles_venta/', detalles_venta, name='detalles_venta'),
+    path('cambiar_estado_venta/', cambiar_estado_venta, name='cambiar_estado_venta'),
+    path('add_review/', add_review, name='add_review'),
+    
+] 

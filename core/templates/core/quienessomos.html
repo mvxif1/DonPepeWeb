@@ -1,0 +1,173 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Accesorios Don Pepe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Agregar librería de Font Awesome para los iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/inicio.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fdfde3;">
+        <div class="container-fluid">
+            <!-- Logo clickeable que redirige a la página de inicio -->
+            <a class="navbar-brand" href="{% url 'inicio' %}">
+                <img src="{% static 'img/logo-don-pepe.png' %}" class="logo" style="max-width: 80%;"
+                    alt="Accesorios Don Pepe">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'inicio' %}">
+                            Inicio
+                            <i class="bi bi-house-door-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'productos' %}">
+                            Productos
+                            <i class="bi bi-basket2-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'quienessomos' %}">
+                            Quienes Somos
+                            <i class="bi bi-question-circle-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'galeria' %}">
+                            Galería
+                            <i class="bi bi-image"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2 position-relative" data-bs-toggle="modal" data-bs-target="#cartModal">
+                            Carrito
+                            <i class="bi bi-cart4"></i>
+                            {% if carrito_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-top: 25px;">
+                                    {{ carrito_count }}
+                                    <span class="visually-hidden">items in cart</span>
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <!-- Botón dropdown para Registro/Login o Perfil dependiendo de la autenticación -->
+                        {% if user.is_authenticated %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning py-4 px-4 mx-2 dropdown-toggle"
+                                data-bs-toggle="dropdown" style="font-weight: 700; border: 0px; border-radius: 10px;">
+                                {% if user.is_superuser %}
+                                Administrador
+                                {% else %}
+                                Hola {{ user.first_name }}
+                                {% endif %}
+                                <i class="bi bi-person-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu"
+                                style="margin-left: 25px; margin-top: -5px; background-color: #ffc107; border: 0px; border-radius: 10px;">
+                                {% if user.is_superuser %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'administrador' %}">Administrador</a></li>
+                                {% else %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'editarperfil' %}">Editar Perfil</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'cerrarsesion' %}">Cerrar Sesión</a></li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning py-4 px-4 mx-2 dropdown-toggle"
+                                data-bs-toggle="dropdown" style="font-weight: 700; border: 0px; border-radius: 10px;">
+                                Inicio Sesión
+                                <i class="bi bi-person-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu"
+                                style="margin-left: 25px; margin-top: -5px; background-color: #ffc107; border: 0px; border-radius: 10px;">
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'login_user' %}">Iniciar Sesión</a></li>
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'register' %}">Registrarse</a></li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <br>
+
+    <style>
+        .imagen-producto {
+            width: 160px;
+            /* Tamaño deseado para todas las imágenes */
+            height: 160px;
+            /* Tamaño deseado para todas las imágenes */
+            object-fit: cover;
+            /* Mantiene la proporción de la imagen y recorta para ajustarse al tamaño especificado */
+        }
+    </style>
+
+
+    <!-- Recuadro con el texto de Quienes Somos -->
+    <div class="card">
+        <p>Somos una empresa dedicada a la venta de alternadores y motores de partida y todos sus despieces.</p>
+        <p>Trabajamos con repuestos originales y alternativos, para automóviles, buses, camiones, maquinaria agrícola.</p>
+        <p>Nos caracterizamos por nuestra seriedad, atención personalizada y especializada, además de excelente calidad en nuestros productos.</p>
+        <p>Despachamos en toda la Región de la Araucanía y en el resto de Chile.</p>
+    </div>
+
+    <!-- Sección de información de ubicación y contacto -->
+    <div class="container-fluid py-5" style="background-color: #fdfde3; color: #e4ab00;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Ubicación</h2>
+                    <i class="fas fa-map-marker-alt fa-2x"></i>
+                    <!-- Aquí puedes incrustar el mapa interactivo -->
+                    <p>Zenteno 524, Temuco</p>
+                </div>
+                <div class="col-md-6">
+                    <h2>Contacto</h2>
+                    <i class="fas fa-phone-alt fa-2x"></i>
+                    <p>+56 45 221 3719</p>
+                    <p>+56 9 5297 0113</p>
+                    <i class="fas fa-envelope fa-2x"></i>
+                    <p>contacto@alternadoresdonpepe.cl</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Bootstrap y Font Awesome -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <!-- Librería para Lightbox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+</body>
+</html>

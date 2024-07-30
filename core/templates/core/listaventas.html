@@ -1,0 +1,430 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Accesorios Don Pepe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Agregar librería de Font Awesome para los iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/inicio.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fdfde3;">
+        <div class="container-fluid">
+            <!-- Logo clickeable que redirige a la página de inicio -->
+            <a class="navbar-brand" href="{% url 'inicio' %}">
+                <img src="{% static 'img/logo-don-pepe.png' %}" class="logo" style="max-width: 80%;"
+                    alt="Accesorios Don Pepe">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'inicio' %}">
+                            Inicio
+                            <i class="bi bi-house-door-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'productos' %}">
+                            Productos
+                            <i class="bi bi-basket2-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'quienessomos' %}">
+                            Quienes Somos
+                            <i class="bi bi-question-circle-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'galeria' %}">
+                            Galería
+                            <i class="bi bi-image"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2 position-relative" data-bs-toggle="modal"
+                            data-bs-target="#cartModal">
+                            Carrito
+                            <i class="bi bi-cart4"></i>
+                            {% if carrito_count > 0 %}
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="margin-top: 25px;">
+                                {{ carrito_count }}
+                                <span class="visually-hidden">items in cart</span>
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <!-- Botón dropdown para Registro/Login o Perfil dependiendo de la autenticación -->
+                        {% if user.is_authenticated %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning py-4 px-4 mx-2 dropdown-toggle"
+                                data-bs-toggle="dropdown" style="font-weight: 700; border: 0px; border-radius: 10px;">
+                                {% if user.is_superuser %}
+                                Administrador
+                                {% else %}
+                                Hola {{ user.first_name }}
+                                {% endif %}
+                                <i class="bi bi-person-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu"
+                                style="margin-left: 25px; margin-top: -5px; background-color: #ffc107; border: 0px; border-radius: 10px;">
+                                {% if user.is_superuser %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'administrador' %}">Administrador</a></li>
+                                {% else %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'editarperfil' %}">Editar Perfil</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'cerrarsesion' %}">Cerrar Sesión</a></li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning py-4 px-4 mx-2 dropdown-toggle"
+                                data-bs-toggle="dropdown" style="font-weight: 700; border: 0px; border-radius: 10px;">
+                                Inicio Sesión
+                                <i class="bi bi-person-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu"
+                                style="margin-left: 25px; margin-top: -5px; background-color: #ffc107; border: 0px; border-radius: 10px;">
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'login_user' %}">Iniciar Sesión</a></li>
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'register' %}">Registrarse</a></li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <br>
+
+    <style>
+        .imagen-producto {
+            width: 160px;
+            /* Tamaño deseado para todas las imágenes */
+            height: 160px;
+            /* Tamaño deseado para todas las imágenes */
+            object-fit: cover;
+            /* Mantiene la proporción de la imagen y recorta para ajustarse al tamaño especificado */
+        }
+    </style>
+
+
+    <!-- Ventana emergente del carrito -->
+    <div id="cartModal" class="modal fade" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Carrito de Compras</h5>
+                    <button type="button" class="btn-close" aria-label="Cerrar" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table" style="border-color: rgba(0, 0, 0, 0);">
+                        <thead style="text-align: center;">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody style="text-align: center;">
+                            {% for item in carrito %}
+                            <tr>
+                                <td>{{ item.producto.nombreP }}</td>
+                                <td>{{ item.producto.precio |format_clp }}</td>
+                                <td>{{ item.cantidad }}</td>
+                                <td>{{ item.producto.precio|multiplicar:item.cantidad|format_clp }}</td>
+                                <td>
+                                    <a href="{% url 'eliminar_del_carrito' item.id %}"
+                                        class="btn btn-danger btn-sm">Eliminar</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="3" class="text-end" style="font-size: 20px; font-weight: 500;">Subtotal:
+                                </td>
+                                <td style="font-weight: 500;">{{ total |format_clp }}</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'carrito' %}" class="btn btn-success">Ver carrito</a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible fade show" style="margin-inline: 60px;" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <br>
+                    <h1 class="text-center mb-4">Listado de Ventas</h1>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex" style="text-align: center;">
+                            <select id="searchType" class="form-select">
+                                <option value="id">Buscar por ID</option>
+                            </select>
+                            <input type="text" id="searchInput" class="form-control me-2" style="width: 500px;"
+                                placeholder="Buscar por número de venta..." aria-label="Buscar por número de venta">
+                        </div>
+                    </div>
+
+                    <table class="table table-striped">
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ID Venta</th>
+                                <th>Usuario</th>
+                                <th>Estado</th>
+                                <th>Dirección</th>
+                                <th>Tipo de Despacho</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ventasTable">
+                            {% for venta in ventas %}
+                            <tr style="text-align: center;">
+                                <td>{{ venta.codVenta }}</td>
+                                <td>{{ venta.usuario }}</td>
+                                <td>
+                                    <button type="button" class="btn estado-btn" data-venta-id="{{ venta.codVenta }}" data-estado-id="{{ venta.estadoP.id_estado }}">
+                                        {{ venta.estadoP.nombreEs }}
+                                    </button>
+                                </td>                                
+                                <td>{{ venta.direccion }}</td>
+                                <td>{{ venta.tipodespacho }}</td>
+                                <td>{{ venta.total | format_clp }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-primary ver-detalles" style="padding: 6px 15px"
+                                        data-venta-id="{{ venta.codVenta }}">Ver Detalles</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="detallesVentaModal" tabindex="-1" aria-labelledby="detallesVentaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detallesVentaModalLabel">Detalles de la Venta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr style="text-align: center;">   
+                                <th></th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productosVenta">
+                            <!-- Aquí se cargarán dinámicamente los productos de la venta -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Scripts de Bootstrap y Font Awesome -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <!-- Librería para Lightbox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/src/js.cookie.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Obtener el token CSRF desde las cookies
+            var csrftoken = getCookie('csrftoken');
+
+            // Función para obtener el valor de una cookie por nombre
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // Buscar la cookie que comienza con 'csrftoken='
+                        if (cookie.substring(0, 10) === 'csrftoken=') {
+                            cookieValue = decodeURIComponent(cookie.substring(10));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Inicializar estilos de los botones de estado
+            $('.estado-btn').each(function () {
+                var boton = $(this);
+                var estado_id = boton.data('estado-id');
+
+                if (estado_id === 1) {  // Venta Recibida
+                    boton.addClass('btn-warning');
+                } else if (estado_id === 2) {  // Salida del almacén
+                    boton.addClass('btn-secondary');
+                } else if (estado_id === 3) {  // En camino
+                    boton.addClass('btn-primary');
+                } else if (estado_id === 4) {  // Recibido
+                    boton.addClass('btn-success');
+                }
+            });
+
+            $('.estado-btn').click(function () {
+                var boton = $(this);
+                var venta_id = boton.data('venta-id');
+                var estado_id = boton.data('estado-id');
+
+                // Enviar la solicitud para cambiar el estado en la base de datos
+                $.ajax({
+                    url: '/cambiar_estado_venta/',
+                    type: 'POST',
+                    headers: { 'X-CSRFToken': csrftoken },  // Incluir el token CSRF en los headers
+                    data: {
+                        'venta_id': venta_id
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.estado) {
+                            var nuevo_estado = data.estado.nombreEs;
+                            var nueva_clase = data.estado.claseBoton;
+
+                            // Actualizar el botón con el nuevo estado y color
+                            boton.removeClass('btn-warning btn-secondary btn-primary btn-success')
+                                .addClass(nueva_clase)
+                                .text(nuevo_estado);
+
+                            // Actualizar el data-estado-id del botón
+                            boton.data('estado-id', data.estado.id_estado);
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error al cambiar estado:', error);
+                    }
+                });
+            });
+
+            $('#searchInput').on('input', function () {
+                var searchText = $(this).val().toLowerCase().trim();
+
+                $('#ventasTable tbody tr').each(function () {
+                    var ventaId = $(this).find('td:first-child').text().toLowerCase().trim();
+
+                    if (ventaId.includes(searchText)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+
+            $('.ver-detalles').click(function () {
+                var venta_id = $(this).data('venta-id');
+                $.ajax({
+                    url: '/detalles_venta/',
+                    type: 'GET',
+                    data: {
+                        'venta_id': venta_id
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        $('#productosVenta').empty();
+                        if (data.detalles_venta) {
+                            $.each(data.detalles_venta, function (index, detalle) {
+                                var precio_unitario = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(detalle.precio_unitario);
+                                var subtotal = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(detalle.subtotal);
+
+                                var row = '<tr style="text-align: center;">' +
+                                    '<td><img src="' + detalle.imagen + '" alt="' + detalle.producto + '" style="max-width: 100px; height: 100px; object-fit: cover;"></td>' +
+                                    '<td>' + detalle.producto + '</td>' +
+                                    '<td>' + detalle.cantidad + '</td>' +
+                                    '<td>' + precio_unitario + '</td>' +
+                                    '<td>' + subtotal + '</td>' +
+                                    '</tr>';
+                                $('#productosVenta').append(row);
+                            });
+                            $('#detallesVentaModal').modal('show');
+                        } else {
+                            console.log('No se encontraron detalles de la venta');
+                        }
+                    },
+                    error: function (error) {
+                        console.log('Error al obtener detalles de la venta:', error);
+                    }
+                });
+            });
+        });
+
+    </script>
+    
+    
+    
+
+
+
+
+</body>
+
+</html>

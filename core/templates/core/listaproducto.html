@@ -1,0 +1,388 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Accesorios Don Pepe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Agregar librería de Font Awesome para los iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/inicio.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fdfde3;">
+        <div class="container-fluid">
+            <!-- Logo clickeable que redirige a la página de inicio -->
+            <a class="navbar-brand" href="{% url 'inicio' %}">
+                <img src="{% static 'img/logo-don-pepe.png' %}" class="logo" style="max-width: 80%;"
+                    alt="Accesorios Don Pepe">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'inicio' %}">
+                            Inicio
+                            <i class="bi bi-house-door-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'productos' %}">
+                            Productos
+                            <i class="bi bi-basket2-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'quienessomos' %}">
+                            Quienes Somos
+                            <i class="bi bi-question-circle-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'galeria' %}">
+                            Galería
+                            <i class="bi bi-image"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2 position-relative" data-bs-toggle="modal" data-bs-target="#cartModal">
+                            Carrito
+                            <i class="bi bi-cart4"></i>
+                            {% if carrito_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="margin-top: 25px;">
+                                    {{ carrito_count }}
+                                    <span class="visually-hidden">items in cart</span>
+                                </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <!-- Botón dropdown para Registro/Login o Perfil dependiendo de la autenticación -->
+                        {% if user.is_authenticated %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning py-4 px-4 mx-2 dropdown-toggle"
+                                data-bs-toggle="dropdown" style="font-weight: 700; border: 0px; border-radius: 10px;">
+                                {% if user.is_superuser %}
+                                Administrador
+                                {% else %}
+                                Hola {{ user.first_name }}
+                                {% endif %}
+                                <i class="bi bi-person-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu"
+                                style="margin-left: 25px; margin-top: -5px; background-color: #ffc107; border: 0px; border-radius: 10px;">
+                                {% if user.is_superuser %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'administrador' %}">Administrador</a></li>
+                                {% else %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'editarperfil' %}">Editar Perfil</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'cerrarsesion' %}">Cerrar Sesión</a></li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning py-4 px-4 mx-2 dropdown-toggle"
+                                data-bs-toggle="dropdown" style="font-weight: 700; border: 0px; border-radius: 10px;">
+                                Inicio Sesión
+                                <i class="bi bi-person-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu"
+                                style="margin-left: 25px; margin-top: -5px; background-color: #ffc107; border: 0px; border-radius: 10px;">
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'login_user' %}">Iniciar Sesión</a></li>
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'register' %}">Registrarse</a></li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <br>
+
+    <style>
+        .imagen-producto {
+            width: 160px;
+            /* Tamaño deseado para todas las imágenes */
+            height: 160px;
+            /* Tamaño deseado para todas las imágenes */
+            object-fit: cover;
+            /* Mantiene la proporción de la imagen y recorta para ajustarse al tamaño especificado */
+        }
+    </style>
+    
+    <script>
+        function eliminar_producto(id_producto) {
+            Swal.fire({
+                title: "¿Estás seguro que quieres eliminar el producto?",
+                text: "Esta acción no se puede deshacer!",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/borrarproducto/" + id_producto + "/";
+                }
+            });
+        }
+    </script>
+        {% if messages %}
+        {% for m in messages %}
+        <script>
+            Swal.fire({
+                title: "Exito!",
+                text: "{{m}}",
+                icon: "success",
+                confirmButtonColor: "rgb(0, 123, 255)"
+            });
+        </script>
+        {% endfor %}
+        {% endif %}
+
+
+
+    
+
+<!-- Ventana emergente del carrito -->
+<div id="cartModal" class="modal fade" data-bs-backdrop="static" style="text-align: center;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="width: 600px;">
+            <div class="modal-header">
+                <h5 class="modal-title">Carrito de Compras</h5>
+                <button type="button" class="btn-close" aria-label="Cerrar" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {% for item in carrito %}
+                <div id="cart-item-{{ item.id }}" class="cart-item" data-id="{{ item.id }}"
+                    data-price="{{ item.producto.precio }}"
+                    style="display: flex; align-items: center; margin-block: 15px; border: 1px solid rgba(0, 0, 0, 0.250);">
+
+                    <img src="{{ item.producto.foto.url }}"
+                        style="margin-inline: 10px; max-width: 110px; height: 110px; object-fit: cover;">
+                    <div style="margin-inline: 10px; flex-grow: 1;">
+                        <strong>{{ item.producto.nombreP }}</strong>
+                    </div>
+                    <div style="margin-inline: 20px;">
+                        <span>{{ item.producto.precio | format_clp }}</span>
+                    </div>
+                    <div style="margin-inline: 20px; display: flex; align-items: center;">
+                        <form action="{% url 'aumentar_cantidad' item.producto.codProducto %}" method="post"
+                            style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-secondary btn-sm">+</button>
+                        </form>
+                        <p type="number" class="quantity" min="1"
+                            style="width: 50px; text-align: center; display: block; margin: 0 10px; border: 1px solid rgba(0, 0, 0, 0.200);"
+                            readonly>{{ item.cantidad }}</p>
+                        <form action="{% url 'disminuir_cantidad' item.producto.codProducto %}" method="post"
+                            style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-secondary btn-sm">-</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="container">
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-md-6" style="text-align: left; font-size: 20px; font-weight: 700;">
+                            <p>Total: </p>
+                        </div>
+                        <div class="col-md-6" style="text-align: right; font-size: 20px; font-weight: 700;">
+                            <p>{{ total | format_clp }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: left;">
+                            <a class="btn btn-success w-100" href="{% url 'carrito' %}" >Ver carrito</a>
+                        </div>
+                        <div class="col-md-6" style="text-align: right;">
+                            <button class="btn btn-secondary w-100" type="button"  data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <div id="messages" data-messages="{% for message in messages %}{{ message|escapejs }}{% if not forloop.last %}|||{% endif %}{% endfor %}"></div>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <br>
+                    <h1 class="text-center mb-4">Listado de Productos</h1>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <a href="{% url 'exportar_productos_excel' %}" class="btn btn-success">
+                                Exportar inventario
+                                <i class="fas fa-file-excel"></i>
+                            </a>
+                        </div>
+                        <div class="d-flex">
+                            <input type="text" id="searchInput" class="form-control me-2" style="width: 500px;" placeholder="Buscar por nombre o ID...">
+                            <select id="searchType" class="form-select">
+                                <option value="nombre">Buscar por nombre</option>
+                                <option value="id">Buscar por ID</option>
+                                <option value="mas_vendido">Más Vendido</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+
+
+
+                    
+                    <table class="col-md-12 col-xl-12" >
+                        <thead>
+                            <tr style="text-align: center;">
+                                <th>ID Producto</th>
+                                <th>Nombre</th>
+                                <th>Stock</th>
+                                <th>Descripcion</th>
+                                <th>Foto</th>
+                                <th>Precio</th>
+                                <th>Categoria</th>
+                                <th>Cantidad Vendida</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productosTable">
+                            {% for m in productos %}
+                            <tr style="text-align: center;">
+                                <td>{{ m.codProducto }}</td>
+                                <td>{{ m.nombreP }}</td>
+                                <td>{{ m.stock }}</td>
+                                <td style="width: 25%; font-size: 12px;">{{ m.descipcion }}</td>
+                                <td><img src="{{ m.foto.url }}" alt="{{ m.nombreP }}" style="max-width: 150px;"></td>
+                                <td>{{ m.precio | format_clp }}</td>
+                                <td>{{ m.categoria }}</td>
+                                <td>{{ m.cantidad_vendida }}</td>
+                                <td>
+                                    <a href="{% url 'editarproducto' m.codProducto  %}" class="btn btn-warning"><i class="bi bi-pencil-fill"></i></a>
+                                    <a href="#" onclick="eliminar_producto('{{ m.codProducto }}')" class="btn btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+    
+
+
+
+    <!-- Scripts de Bootstrap y Font Awesome -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+    <!-- Librería para Lightbox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#searchInput').on('input', function() {
+                var searchText = $(this).val().toLowerCase();
+                var searchType = $('#searchType').val();
+                $('#productosTable tr').each(function() {
+                    var match = false;
+                    if (searchType === 'nombre') {
+                        var productName = $(this).find('td:nth-child(2)').text().toLowerCase();
+                        if (productName.indexOf(searchText) !== -1) {
+                            match = true;
+                        }
+                    } else if (searchType === 'id') {
+                        var productId = $(this).find('td:first-child').text().toLowerCase();
+                        if (productId.indexOf(searchText) !== -1) {
+                            match = true;
+                        }
+                    }
+        
+                    if (match) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        
+            $('#searchType').on('change', function() {
+                var searchType = $(this).val();
+                if (searchType === 'mas_vendido') {
+                    var maxSold = -1;
+                    var maxRow = null;
+                    $('#productosTable tr').each(function() {
+                        var soldAmount = parseInt($(this).find('td:nth-child(8)').text(), 10); // Ajusta el índice de columna según sea necesario
+                        if (soldAmount > maxSold) {
+                            maxSold = soldAmount;
+                            maxRow = $(this);
+                        }
+                    });
+                    $('#productosTable tr').hide();
+                    if (maxRow) {
+                        maxRow.show();
+                    }
+                } else {
+                    $('#searchInput').trigger('input');
+                }
+            });
+        });
+        </script>
+        
+        {% if productos_bajo_stock %}
+<script>
+    $(document).ready(function() {
+        var lowStockProducts = [];
+        {% for producto in productos_bajo_stock %}
+            lowStockProducts.push("{{ producto.nombreP }} (ID: {{ producto.codProducto }})");
+        {% endfor %}
+        console.log(lowStockProducts);  // Imprime los productos de bajo stock en la consola
+        if (lowStockProducts.length > 0) {
+            var message = "Productos con stock bajo:\n" + lowStockProducts.join("\n");
+            Swal.fire({
+                title: 'Advertencia',
+                text: message,
+                icon: 'warning',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+</script>
+{% endif %}
+
+</body>
+</html>

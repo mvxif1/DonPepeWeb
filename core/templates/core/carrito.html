@@ -1,0 +1,801 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos - Accesorios Don Pepe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Agregar librería de Font Awesome para los iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="{% static 'css/inicio.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fdfde3;">
+        <div class="container-fluid">
+            <!-- Logo clickeable que redirige a la página de inicio -->
+            <a class="navbar-brand" href="{% url 'inicio' %}">
+                <img src="{% static 'img/logo-don-pepe.png' %}" class="logo" style="max-width: 80%;"
+                    alt="Accesorios Don Pepe">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'inicio' %}">
+                            Inicio
+                            <i class="bi bi-house-door-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'productos' %}">
+                            Productos
+                            <i class="bi bi-basket2-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'quienessomos' %}">
+                            Quienes Somos
+                            <i class="bi bi-question-circle-fill"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2" href="{% url 'galeria' %}">
+                            Galería
+                            <i class="bi bi-image"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-warning py-4 px-4 mx-2 position-relative" data-bs-toggle="modal"
+                            data-bs-target="#cartModal">
+                            Carrito
+                            <i class="bi bi-cart4"></i>
+                            {% if carrito_count > 0 %}
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="margin-top: 25px;">
+                                {{ carrito_count }}
+                                <span class="visually-hidden">items in cart</span>
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <!-- Botón dropdown para Registro/Login o Perfil dependiendo de la autenticación -->
+                        {% if user.is_authenticated %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning py-4 px-4 mx-2 dropdown-toggle"
+                                data-bs-toggle="dropdown" style="font-weight: 700; border: 0px; border-radius: 10px;">
+                                {% if user.is_superuser %}
+                                Administrador
+                                {% else %}
+                                Hola {{ user.first_name }}
+                                {% endif %}
+                                <i class="bi bi-person-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu"
+                                style="margin-left: 25px; margin-top: -5px; background-color: #ffc107; border: 0px; border-radius: 10px;">
+                                {% if user.is_superuser %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'administrador' %}">Administrador</a></li>
+                                {% else %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'editarperfil' %}">Editar Perfil</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'cerrarsesion' %}">Cerrar Sesión</a></li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning py-4 px-4 mx-2 dropdown-toggle"
+                                data-bs-toggle="dropdown" style="font-weight: 700; border: 0px; border-radius: 10px;">
+                                Inicio Sesión
+                                <i class="bi bi-person-fill"></i>
+                            </button>
+                            <ul class="dropdown-menu"
+                                style="margin-left: 25px; margin-top: -5px; background-color: #ffc107; border: 0px; border-radius: 10px;">
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'login_user' %}">Iniciar Sesión</a></li>
+                                <li><a class="dropdown-item"
+                                        style="padding: 10px; color:black; background-color: #fdfde3;"
+                                        href="{% url 'register' %}">Registrarse</a></li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <br>
+
+    <style>
+        .imagen-producto {
+            width: 160px;
+            /* Tamaño deseado para todas las imágenes */
+            height: 160px;
+            /* Tamaño deseado para todas las imágenes */
+            object-fit: cover;
+            /* Mantiene la proporción de la imagen y recorta para ajustarse al tamaño especificado */
+        }
+
+        .btn-despacho-domicilio.active,
+        .btn-retiro-tienda.active {
+            background-color: #ffc107;
+            /* Cambia el color de fondo cuando está activo */
+            color: black;
+            /* Cambia el color del texto cuando está activo */
+        }
+    </style>
+
+
+
+<!-- Ventana emergente del carrito -->
+<div id="cartModal" class="modal fade" data-bs-backdrop="static" style="text-align: center;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="width: 600px;">
+            <div class="modal-header">
+                <h5 class="modal-title">Carrito de Compras</h5>
+                <button type="button" class="btn-close" aria-label="Cerrar" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                {% for item in carrito %}
+                <div id="cart-item-{{ item.id }}" class="cart-item" data-id="{{ item.id }}"
+                    data-price="{{ item.producto.precio }}"
+                    style="display: flex; align-items: center; margin-block: 15px; border: 1px solid rgba(0, 0, 0, 0.250);">
+
+                    <img src="{{ item.producto.foto.url }}"
+                        style="margin-inline: 10px; max-width: 110px; height: 110px; object-fit: cover;">
+                    <div style="margin-inline: 10px; flex-grow: 1;">
+                        <strong>{{ item.producto.nombreP }}</strong>
+                    </div>
+                    <div style="margin-inline: 20px;">
+                        <span>{{ item.producto.precio | format_clp }}</span>
+                    </div>
+                    <div style="margin-inline: 20px; display: flex; align-items: center;">
+                        <form action="{% url 'aumentar_cantidad' item.producto.codProducto %}" method="post"
+                            style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-secondary btn-sm">+</button>
+                        </form>
+                        <p type="number" class="quantity" min="1"
+                            style="width: 50px; text-align: center; display: block; margin: 0 10px; border: 1px solid rgba(0, 0, 0, 0.200);"
+                            readonly>{{ item.cantidad }}</p>
+                        <form action="{% url 'disminuir_cantidad' item.producto.codProducto %}" method="post"
+                            style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-secondary btn-sm">-</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="container">
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-md-6" style="text-align: left; font-size: 20px; font-weight: 700;">
+                            <p>Total: </p>
+                        </div>
+                        <div class="col-md-6" style="text-align: right; font-size: 20px; font-weight: 700;">
+                            <p>{{ total | format_clp }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: left;">
+                            <a class="btn btn-success w-100" href="{% url 'carrito' %}" >Ver carrito</a>
+                        </div>
+                        <div class="col-md-6" style="text-align: right;">
+                            <button class="btn btn-secondary w-100" type="button"  data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+
+
+    <script>
+        function eliminar_del_carrito(carrito_id) {
+            Swal.fire({
+                title: "¿Estás seguro que quieres eliminar el producto del carrito?",
+                text: "Esta acción no se puede deshacer!",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/eliminar_del_carrito/" + carrito_id + "/";
+                }
+            });
+        }
+    </script>
+    {% if messages %}
+    {% for message in messages %}
+    <script>
+        Swal.fire({
+            title: "{% if message.tags == 'success' %}¡Éxito!{% else %}Advertencia{% endif %}",
+            text: "{{ message }}",
+            icon: "{% if message.tags == 'success' %}success{% else %}warning{% endif %}",
+            confirmButtonColor: "rgb(0, 123, 255)"
+        });
+    </script>
+    {% endfor %}
+    {% endif %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Columna para el carrito de compras -->
+            <div class="col-md-8">
+                <div>
+                    <div style="text-align: center; font-weight: 500; font-size: 25px; text-transform: uppercase;">
+                        <h8>Carrito de Compras <i class="bi bi-cart4"></i></h8>
+                    </div>
+                    <br>
+
+                    <div class="container" style="border: 1px solid rgba(0, 0, 0, 0.250);">
+                    {% if carrito %}
+                        {% for item in carrito %}
+                        <div id="cart-item-{{ item.id }}" class="cart-item" data-id="{{ item.id }}"
+                            data-price="{{ item.producto.precio }}"
+                            style="display: flex; align-items: center; margin-block: 15px;  border: 1px solid rgba(0, 0, 0, 0.250);">
+
+                            <img src="{{ item.producto.foto.url }}"
+                                style=" margin-left: 10px; max-width: 110px; height: 110px; object-fit: cover;">
+                            <div style="margin-left: 10px; flex-grow: 1;">
+                                <strong>{{ item.producto.nombreP }}</strong>
+                            </div>
+                            <div style="margin-left: 20px;">
+                                <span>{{ item.producto.precio | format_clp }}</span>
+                            </div>
+                            <div
+                                style="margin-left: 20px; display: flex; align-items: center; justify-content: center;">
+                                <form action="{% url 'aumentar_cantidad' item.producto.codProducto %}" method="post"
+                                    style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-secondary btn-sm">+</button>
+                                </form>
+                                <p type="number" class="quantity" min="1"
+                                    style="width: 50px; text-align: center; display: block; margin: 0 auto; border: 1px solid rgba(0, 0, 0, 0.200);"
+                                    readonly>{{ item.cantidad }}</p>
+
+                                <form action="{% url 'disminuir_cantidad' item.producto.codProducto %}" method="post"
+                                    style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-secondary btn-sm">-</button>
+                                </form>
+                            </div>
+                            <div style="margin-left: 20px;">
+                                <span class="total">{{item.producto.precio|multiplicar:item.cantidad|format_clp}}</span>
+                            </div>
+                            <div style="margin-inline: 30px;">
+                                <a onclick="eliminar_del_carrito('{{ item.id }}')" class="btn btn-danger btn-sm">Eliminar</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="row">
+                            <div class="col-md-6" style="text-align: left; font-size: 20px; font-weight: 700;">
+                                <p>Total: </p>
+                            </div>
+                            <div class="col-md-6" style="text-align: right; font-size: 20px; font-weight: 700;">
+                                <p>{{ total | format_clp }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                    <div>
+                        <div style="text-align: center; margin-block: 100px; font-weight: 500; font-size: 20px;">
+                            <h8>Tu carrito está vacío</h8>
+                        </div>
+                        <div style="text-align: center; margin-block: 20px;">
+                            <a href="{% url 'productos' %}" class="btn btn-success">Añadir productos</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    </div>
+                    
+                </div>
+            </div>
+
+<!-- Columna para seleccionar método de entrega -->
+<div class="col-md-4">
+    <div class="card" style="text-align: center;">
+        <div class="card-header text-white" style="background-color: #ffc107;">
+            <h5>Selecciona método de entrega</h5>
+        </div>
+        <div class="card-header">
+            <!-- Botones de selección -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-warning btn-block py-4 px-4 mx-2 btn-despacho-domicilio"
+                            style="border: 0px; font-weight: 700; border-radius: 8px; width: 80%;"
+                            onclick="showDespachoDomicilio()" data-carrito-vacio="{% if not carrito %}true{% else %}false{% endif %}">
+                            Despacho a domicilio
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-warning btn-block py-4 px-4 mx-2 btn-retiro-tienda"
+                            style="border: 0px; font-weight: 700; border-radius: 8px; width: 80%; "
+                            onclick="showRetiroTienda()" data-carrito-vacio="{% if not carrito %}true{% else %}false{% endif %}">
+                            Retiro en tienda
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="display: none;" id="deliveryMethods">
+            <!-- Formulario para retiro en tienda -->
+            <form id="formRetiroTienda" method="post" action="{% url 'crear_venta' %}">
+                {% csrf_token %}
+                <div id="retiroTienda" style="display: none; text-align: left; margin-inline: 10px;">
+                    <h5>Retiro en tienda</h5>
+                    <div class="hr">
+                        <hr>
+                    </div>
+                    <p>Tienda: Temuco</p>
+                    <p>Dirección: Zenteno 524, Temuco</p>
+                    <div class="hr">
+                        <hr>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-6" style="text-align: left; font-size: 20px; font-weight: 700;">
+                                <p>Total: </p>
+                            </div>
+                            <div class="col-md-6" style="text-align: right; font-size: 20px; font-weight: 700;">
+                                <p>{{ total | format_clp }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="tipo_entrega" value="tienda">
+                    <input type="hidden" name="total" value="{{ total }}">
+                    <input type="hidden" name="carrito" value="{{ carrito_count }}">
+                    <div style="text-align: center;">
+                        <button type="button" class="btn btn-warning" style="width: 100%; font-weight: 700;" onclick="mostrarDetallesVenta()">Siguiente</button>
+                    </div>
+                </div>
+            </form>
+        
+<!-- Formulario para despacho a domicilio -->
+<form id="formDespachoDomicilio" method="post" action="{% url 'crear_venta' %}">
+    {% csrf_token %}
+    <div id="despachoDomicilio" style="display: none; text-align: left; margin-inline: 10px;">
+        <h5>Despacho a domicilio</h5>
+        <div class="hr">
+            <hr>
+        </div>
+
+        <div class="mb-3">
+            <label for="region">Región:</label>
+            <select class="form-select" id="region" name="region" onchange="cargarComunas()">
+                <option value="">Selecciona una región</option>
+                {% for region in regiones %}
+                <option value="{{ region.idRegion }}" {% if region.idRegion == region_id %}selected{% endif %}>
+                    {{ region.nombreR }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="comuna">Comuna:</label>
+            <select class="form-select" id="comuna" name="comuna" onchange="actualizarCostoEnvio()">
+                <option value="">Primero selecciona una región</option>
+                <!-- Las opciones de comuna se cargarán dinámicamente -->
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="calle">Calle:</label>
+            <input type="text" class="form-control" id="calle" name="calle" oninput="validarFormulario()">
+        </div>
+
+        <div class="mb-3">
+            <label for="numero">Número:</label>
+            <input type="text" class="form-control" id="numero" name="numero" oninput="validarFormulario()">
+        </div>
+
+        <div class="mb-3">
+            <label for="metodoDespacho">Método de Despacho:</label>
+            <select class="form-select" id="metodoDespacho" name="metodo_despacho" onchange="actualizarCostoEnvio()">
+                <option value="">Selecciona un método de despacho</option>
+                <option value="correos_de_chile">Correos de Chile</option>
+                <option value="starken">Starken</option>
+                <option value="chilexpress">Chilexpress</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="costoEnvio">Costo de Envío:</label>
+            <span id="costoEnvio">0</span>
+        </div>
+
+        <div class="mb-3">
+            <label>Total con Envío:</label>
+            <span id="totalConEnvio">{{ total | format_clp }}</span>
+        </div>
+
+        <input type="hidden" name="tipo_entrega" value="domicilio">
+        <input type="hidden" name="total" id="totalInput" value="{{ total }}">
+        <input type="hidden" name="carrito" value="{{ carrito_count }}">
+
+        <div style="text-align: center;">
+            <button type="button" class="btn btn-warning" id="btnSiguienteDomicilio" style="width: 100%; font-weight: 700;" onclick="mostrarDetallesVenta()" disabled>Siguiente</button>
+        </div>
+    </div>
+</form>
+
+<!-- Modal para detalles de la venta -->
+<div class="modal fade" id="detallesVentaModal" tabindex="-1" aria-labelledby="detallesVentaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detallesVentaModalLabel">Detalles de la Venta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detallesVentaContent">
+                    <!-- Aquí se mostrarán los detalles dinámicos de la venta -->
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-danger w-100" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-success w-100" onclick="mostrarMetodosPago()">Seleccionar método de pago</button>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>
+
+<!-- Modal para selección de método de pago -->
+<div class="modal fade" id="metodosPagoModal" tabindex="-1" aria-labelledby="metodosPagoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="metodosPagoModalLabel">Selecciona método de pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary w-100" onclick="simularPago('webpay')">Pagar con WebPay</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary w-100" onclick="simularPago('paypal')">Pagar con PayPal</button>
+                        </div>
+                    </div>
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Scripts de Bootstrap y Font Awesome -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const regionSelect = document.getElementById('region');
+        const comunaSelect = document.getElementById('comuna');
+
+        regionSelect.addEventListener('change', function() {
+            const regionId = this.value;
+            fetch(`/api/comunas/${regionId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    comunaSelect.innerHTML = '<option value="">Primero selecciona una región</option>';
+                    data.forEach(comuna => {
+                        comunaSelect.innerHTML += `<option value="${comuna.id}">${comuna.nombreC}</option>`;
+                    });
+                });
+        });
+    });
+
+    function showRetiroTienda() {
+        const carritoVacio = document.querySelector('.btn-retiro-tienda').getAttribute('data-carrito-vacio');
+        if (carritoVacio === 'true') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Carrito vacío',
+                text: 'Tu carrito está vacío. No puedes seleccionar un método de entrega.',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+        document.getElementById('retiroTienda').style.display = 'block';
+        document.getElementById('despachoDomicilio').style.display = 'none';
+        document.querySelector('.btn-despacho-domicilio').classList.remove('active');
+        document.querySelector('.btn-retiro-tienda').classList.add('active');
+        document.getElementById('deliveryMethods').style.display = 'block';
+        document.getElementById('btnSiguienteDomicilio').disabled = false;
+    }
+
+    function showDespachoDomicilio() {
+        const carritoVacio = document.querySelector('.btn-despacho-domicilio').getAttribute('data-carrito-vacio');
+        if (carritoVacio === 'true') {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Carrito vacío',
+                text: 'Tu carrito está vacío. No puedes seleccionar un método de entrega.',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+        document.getElementById('retiroTienda').style.display = 'none';
+        document.getElementById('despachoDomicilio').style.display = 'block';
+        document.querySelector('.btn-retiro-tienda').classList.remove('active');
+        document.querySelector('.btn-despacho-domicilio').classList.add('active');
+        document.getElementById('deliveryMethods').style.display = 'block';
+        validarFormulario();
+    }
+
+    function actualizarCostoEnvio() {
+        var metodoDespacho = document.getElementById("metodoDespacho").value;
+        var costoEnvio = 0;
+    
+        switch (metodoDespacho) {
+            case "correos_de_chile":
+                // Rango de costo para Correos de Chile: 5000 a 17000 pesos
+                costoEnvio = Math.floor(Math.random() * (17000 - 5000 + 1)) + 5000;
+                break;
+            case "starken":
+                // Rango de costo para Starken: 9000 a 32000 pesos
+                costoEnvio = Math.floor(Math.random() * (32000 - 9000 + 1)) + 9000;
+                break;
+            case "chilexpress":
+                // Rango de costo para Chilexpress: 15000 a 20000 pesos
+                costoEnvio = Math.floor(Math.random() * (20000 - 15000 + 1)) + 15000;
+                break;
+            default:
+                costoEnvio = 0; // Si no se selecciona método de despacho, costo cero
+                break;
+        }
+    
+        // Mostrar el costo de envío actualizado en el formulario
+        document.getElementById("costoEnvio").innerText = costoEnvio.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
+    
+        // Actualizar el total sumando el costo de envío
+        var total = parseFloat(document.getElementById("totalInput").value);
+        var totalConEnvio = total + costoEnvio;
+    
+        // Mostrar el total actualizado en el formulario
+        document.getElementById("totalConEnvio").innerText = totalConEnvio.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
+    
+        // Habilitar el botón de siguiente si hay un método de despacho seleccionado
+        var btnSiguiente = document.getElementById("btnSiguienteDomicilio");
+        btnSiguiente.disabled = metodoDespacho === "";
+    }
+    
+    function validarFormulario() {
+        const region = document.getElementById('region').value;
+        const comuna = document.getElementById('comuna').value;
+        const calle = document.getElementById('calle').value;
+        const numero = document.getElementById('numero').value;
+    
+        const btnSiguienteDomicilio = document.getElementById('btnSiguienteDomicilio');
+    
+        if (region && comuna && calle && numero) {
+            btnSiguienteDomicilio.disabled = false;
+        } else {
+            btnSiguienteDomicilio.disabled = true;
+        }
+    }
+    
+    function mostrarDetallesVenta() {
+        let detallesVentaContent = '';
+        let totalConEnvio = 0;
+    
+        if (document.querySelector('.btn-despacho-domicilio').classList.contains('active')) {
+            const region = document.getElementById('region').selectedOptions[0].text;
+            const comuna = document.getElementById('comuna').selectedOptions[0].text;
+            const calle = document.getElementById('calle').value;
+            const numero = document.getElementById('numero').value;
+            const metodoDespacho = document.getElementById('metodoDespacho').value;
+            const costoEnvio = parseFloat(document.getElementById('costoEnvio').innerText.replace(/\D/g, ''));
+    
+            totalConEnvio = parseFloat(document.getElementById("totalInput").value) + costoEnvio;
+    
+            detallesVentaContent = `
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: left; font-size: 15px;">
+                            <p><strong>Tipo de entrega:</strong> Despacho a domicilio</p>
+                            <p><strong>Región:</strong> ${region}</p>
+                            <p><strong>Comuna:</strong> ${comuna}</p>
+                            <p><strong>Calle:</strong> ${calle}</p>
+                            <p><strong>Número:</strong> ${numero}</p>
+                            <p><strong>Método de Despacho:</strong> ${metodoDespacho}</p>
+                            <p><strong>Costo de Envío:</strong> ${costoEnvio.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</p>
+                        </div>
+                        <div class="col-md-6" style="text-align: left; font-size: 15px;">
+                            <p><strong>Total a comprar:</strong> ${totalConEnvio.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            totalConEnvio = parseFloat(document.getElementById("totalInput").value);
+    
+            detallesVentaContent = `
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6" style="text-align: left; font-size: 15px;">
+                            <p><strong>Tipo de entrega:</strong> Retiro en tienda</p>
+                            <p><strong>Comuna:</strong> Temuco</p>
+                            <p><strong>Dirección:</strong> Zenteno 524</p>
+                        </div>
+                        <div class="col-md-6" style="text-align: left; font-size: 15px;">
+                            <p><strong>Total a comprar:</strong> ${totalConEnvio.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    
+        detallesVentaContent += `
+            <div class="hr">
+                <hr>
+            </div>
+        `;
+    
+        document.getElementById('detallesVentaContent').innerHTML = detallesVentaContent;
+    
+        // Mostrar modal
+        var detallesVentaModal = new bootstrap.Modal(document.getElementById('detallesVentaModal'), {});
+        detallesVentaModal.show();
+    }
+    
+    function confirmarCompra() {
+        Swal.fire({
+            title: "¿Estás seguro de que quieres confirmar la compra?",
+            icon: "success",
+            showCancelButton: true,
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (document.querySelector('.btn-despacho-domicilio').classList.contains('active')) {
+                    document.getElementById('formDespachoDomicilio').submit();
+                } else {
+                    document.getElementById('formRetiroTienda').submit();
+                }
+            }
+        });
+    }
+
+    // Función para mostrar el modal de selección de método de pago
+    function mostrarMetodosPago() {
+        // Mostrar modal de selección de método de pago
+        var metodosPagoModal = new bootstrap.Modal(document.getElementById('metodosPagoModal'), {});
+        metodosPagoModal.show();
+    }
+
+    // Función para simular el pago según el método seleccionado
+    function simularPago(metodo) {
+        var detallesVentaModal = new bootstrap.Modal(document.getElementById('detallesVentaModal'), {});
+        detallesVentaModal.hide(); // Ocultar modal de detalles de venta
+
+        switch (metodo) {
+            case "webpay":
+                simularPagoWebPay();
+                break;
+            case "paypal":
+                simularPagoPayPal();
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Función para simular el pago con WebPay
+    function simularPagoWebPay() {
+        // Aquí debes implementar la lógica para obtener los datos de la transacción y enviarlos a WebPay
+        // Suponiendo que tienes una URL de prueba para WebPay (reemplaza con la URL real obtenida de Transbank)
+        var urlPagoWebPay = 'https://webpay.transbank.cl/';
+
+        // Abrir una nueva ventana para el pago
+        var ventanaPago = window.open(urlPagoWebPay, '_blank');
+
+        // Detectar cuando se cierre la ventana de pago
+        ventanaPago.onunload = function() {
+            // Actualizar los detalles de la venta y agregar botón de descarga de boleta
+            mostrarDetallesVentaConBoleta();
+        };
+    }
+
+    // Función para mostrar detalles de la venta con opción de descargar boleta en PDF
+    function mostrarDetallesVentaConBoleta() {
+        mostrarDetallesVenta(); // Mostrar detalles de la venta como lo hacías antes
+
+        // Agregar el botón de descarga de boleta en PDF
+        var detallesVentaContent = document.getElementById('detallesVentaContent');
+        var botonDescargarBoleta = document.createElement('button');
+        botonDescargarBoleta.textContent = 'Descargar Boleta';
+        botonDescargarBoleta.classList.add('btn', 'btn-primary', 'mt-3');
+        botonDescargarBoleta.onclick = function() {
+            // Lógica para descargar la boleta en PDF
+            descargarBoletaPDF();
+        };
+        detallesVentaContent.appendChild(botonDescargarBoleta);
+    }
+
+    // Función para descargar la boleta en formato PDF (simulada)
+    function descargarBoletaPDF() {
+        // Aquí debes implementar la lógica para descargar la boleta en formato PDF
+        // Por ejemplo, podrías abrir una nueva ventana con una ruta que genere el PDF y lo descargue automáticamente
+        var urlGeneracionPDF = 'http://127.0.0.1:8000/carrito/';
+
+        // Abrir una nueva ventana para descargar el PDF
+        window.open(urlGeneracionPDF, '_blank');
+    }
+
+    // Función para simular el pago con PayPal
+    function simularPagoPayPal() {
+        // Suponiendo que tienes una URL de prueba para PayPal (reemplaza con la URL real obtenida de PayPal)
+        var urlPagoPayPal = 'https://paypal.me/DOHANLOID?country.x=CL&locale.x=es_XC';
+
+        // Abrir una nueva ventana para el pago
+        var ventanaPago2 = window.open(urlPagoPayPal, '_blank');
+
+        // Detectar cuando se cierre la ventana de pago
+        ventanaPago2.onunload = function() {
+            // Actualizar los detalles de la venta y agregar botón de descarga de boleta
+            mostrarDetallesVentaConBoleta();
+        };
+    }
+    
+
+    // Llamar a las funciones al cargar la página para establecer un valor inicial si es necesario
+    window.onload = function () {
+        actualizarCostoEnvio();
+        validarFormulario();
+    };
+
+</script>
+
+
+
+
+
+
+</body>
+
+
+</html>
